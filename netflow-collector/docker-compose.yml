@@ -1,0 +1,59 @@
+version: "3.8"
+services:
+  netflow_collector_a:
+    image: pmacct/nfacctd:latest
+    restart: unless-stopped
+    env_file:
+      - ./env/nfacctd.env
+    volumes:
+      - ./nfacctd_collector.conf:/etc/pmacct/nfacctd.conf:ro
+    depends_on:
+      - nfdb
+
+  netflow_collector_b:
+    image: pmacct/nfacctd:latest
+    restart: unless-stopped
+    env_file:
+      - ./env/nfacctd.env
+    volumes:
+      - ./nfacctd_collector.conf:/etc/pmacct/nfacctd.conf:ro
+    depends_on:
+      - nfdb
+
+  netflow_replicator:
+    image: pmacct/nfacctd:latest
+    restart: unless-stopped
+    volumes:
+      - ./nfacctd_replicator.conf:/etc/pmacct/nfacctd.conf:ro
+      - ./receivers.lst:/etc/pmacct/receivers.lst
+
+  nflb:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 9995:9995/udp   # Expose UDP port 9995
+
+  nfdb:
+    image: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    env_file:
+      - ./env/mysql.env
+    volumes:
+      - ./database-init:/docker-entrypoint-initdb.d
+      - ./db:/var/lib/mysql
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    env_file:
+      - ./env/grafana.env
+    depends_on:
+      - nfdb
