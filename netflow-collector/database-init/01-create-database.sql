@@ -1,10 +1,10 @@
-DROP DATABASE IF EXISTS pmacct;
-CREATE DATABASE pmacct;
+DROP DATABASE IF EXISTS pmacctDB;
+CREATE DATABASE pmacctDB;
 
-USE pmacct;
+USE pmacctDB;
 
 CREATE USER 'pmacct'@'%' IDENTIFIED WITH mysql_native_password BY 'arealsmartpwd';
-GRANT ALL PRIVILEGES ON pmacct.* TO pmacct@'%';
+GRANT ALL PRIVILEGES ON pmacctDB.* TO pmacct@'%';
 
 DROP TABLE IF EXISTS acct;
 CREATE TABLE acct (
