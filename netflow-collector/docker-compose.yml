@@ -51,9 +51,9 @@ services:
     restart: always
     ports:
       - 3000:3000
-    volumes:
-      - ./grafana.ini:/etc/grafana/grafana.ini
     env_file:
       - ./env/grafana.env
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - nfdb
